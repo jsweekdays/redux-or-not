@@ -1,68 +1,41 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Badge, Button, ButtonGroup } from 'reactstrap';
+import { connect } from 'react-redux';
 
 import List from './List'
 
-const items = [
-  {
-    title: 'Parent 1',
-    childrens: [
-      {
-        title: 'Child 1-1',
-      },
-      {
-        title: 'Child 1-2',
-      },
-    ]
-  },
-  {
-    title: 'Parent 2',
-    childrens: [
-      {
-        title: 'Child 2-1',
-      },
-      {
-        title: 'Child 2-2',
-        childrens: [
-          {
-            title: 'Child 2-2-1',
-          },
-          {
-            title: 'Child 2-2-2',
-          },
-        ]
-      },
-    ]
-  },
-  {
-    title: 'Parent 3',
-    childrens: [
-      {
-        title: 'Child 3-1',
-      },
-      {
-        title: 'Child 3-2',
-      },
-    ]
+//actions
+import { calcCount, removeItem, resetState } from '../../../redux/task1';
+
+class Task1 extends Component {
+  componentWillMount() {
+    this.props.calcCount();
   }
-]
 
-const calculateItems = (items) => (
-  items.reduce((accumulator, item) => {
-    if (item.childrens) {
-      accumulator += calculateItems(item.childrens);
+  componentWillReceiveProps(nextProps) {
+    if (this.props.items !== nextProps.items) {
+      this.props.calcCount();
     }
+  }
 
-    return accumulator;
-  }, items.length)
-)
+  render() {
+    const { items, count, removeItem, resetState } = this.props;
+    return (
+      <div>
+        <ButtonGroup style={{ marginBottom: '2rem' }}>
+          <Button disabled color="primary" outline>Counter <Badge color="primary">{count}</Badge></Button>
+          <Button color="primary" onClick={resetState}>Reset data</Button>
+        </ButtonGroup>
+        <List items={items} removeItem={removeItem} />
+      </div>
+    );
+  }
+}
 
-export default (props) => (
-  <div>
-    <ButtonGroup style={{marginBottom: '2rem'}}>
-      <Button disabled color="primary" outline>Counter <Badge color="primary">{calculateItems(items)}</Badge></Button>
-      <Button color="primary">Reset data</Button>
-    </ButtonGroup>
-    <List items={items} />
-  </div>
-);
+export default connect(
+  state => ({
+    items: state.task1.list,
+    count: state.task1.count
+  }),
+  { calcCount, removeItem, resetState }
+)(Task1);

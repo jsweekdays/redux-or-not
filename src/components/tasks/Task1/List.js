@@ -10,16 +10,16 @@ const List = (props) => (
             {item.childrens ? (
               <h5>{item.title}</h5>
             ) : (
-              item.title
-            )}
+                item.title
+              )}
           </Col>
-          <Col xs="6" style={{textAlign: 'right'}}>
-            <Button color="primary" size={'sm'}>Remove</Button>
+          <Col xs="6" style={{ textAlign: 'right' }}>
+            <Button color="primary" size={'sm'} onClick={() => props.removeItem(item)}>Remove</Button>
           </Col>
         </Row>
         {item.childrens && (
-          <div style={{marginTop: '1em'}}>
-            <List items={item.childrens} />
+          <div style={{ marginTop: '1em' }}>
+            <List items={item.childrens} removeItem={props.removeItem} />
           </div>
         )}
       </ListGroupItem>
