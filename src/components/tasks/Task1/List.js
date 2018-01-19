@@ -14,17 +14,17 @@ const List = (props) => (
             )}
           </Col>
           <Col xs="6" style={{textAlign: 'right'}}>
-            <Button color="primary" size={'sm'}>Remove</Button>
+            <Button color="primary" size={'sm'} onClick={props.onRemoveItem(item)}>Remove</Button>
           </Col>
         </Row>
         {item.childrens && (
           <div style={{marginTop: '1em'}}>
-            <List items={item.childrens} />
+            <List items={item.childrens} onRemoveItem={props.onRemoveItem} />
           </div>
         )}
       </ListGroupItem>
     ))}
   </ListGroup>
-);
+)
 
 export default List
