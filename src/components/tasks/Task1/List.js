@@ -7,19 +7,19 @@ const List = (props) => (
       <ListGroupItem key={key} className="justify-content-between">
         <Row>
           <Col xs="6">
-            {item.childrens ? (
-              <h5>{item.title}</h5>
+            {item.get('childrens') ? (
+              <h5>{item.get('title')}</h5>
             ) : (
-                item.title
+                item.get('title')
               )}
           </Col>
           <Col xs="6" style={{ textAlign: 'right' }}>
             <Button color="primary" size={'sm'} onClick={() => props.removeItem(item)}>Remove</Button>
           </Col>
         </Row>
-        {item.childrens && (
+        {item.get('childrens') && (
           <div style={{ marginTop: '1em' }}>
-            <List items={item.childrens} removeItem={props.removeItem} />
+            <List items={item.get('childrens')} removeItem={props.removeItem} />
           </div>
         )}
       </ListGroupItem>

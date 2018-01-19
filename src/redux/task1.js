@@ -1,3 +1,5 @@
+import { fromJS } from 'immutable';
+
 //constants
 const CALC_COUNT = 'CALC_COUNT';
 const REMOVE_ITEM = 'REMOVE_ITEM';
@@ -9,7 +11,7 @@ export const removeItem = item => ({ type: REMOVE_ITEM, payload: item });
 export const resetState = () => ({ type: RESET_STATE });
 
 //reducer
-const initState = {
+const initState = fromJS({
     list: [
         {
             title: 'Parent 1',
@@ -54,36 +56,27 @@ const initState = {
         }
     ],
     count: 0
-};
+});
 
 export default (state=initState, {type, payload}) => {
     switch(type) {
         case CALC_COUNT: {
             const calculateItems = (items) => (
                 items.reduce((accumulator, item) => {
-                    if (item.childrens) {
-                        accumulator += calculateItems(item.childrens);
+                    if (item.get('childrens')) {
+                        accumulator += calculateItems(item.get('childrens'));
                     }
 
                     return accumulator;
-                }, items.length)
+                }, items.size)
             );
-
-            return { ...state, count: calculateItems(state.list) }
+            return state.merge({ count: calculateItems(state.get('list')) });
         }
         case REMOVE_ITEM: {
-            const removeRecursive = (stateItems, deleteItem) => (
-                stateItems
-                    .filter(it => it !== deleteItem)
-                    .map(it => {
-                        if (it.childrens) {
-                            it.childrens = it.childrens.filter(child => child !== deleteItem)
-                        }
-                        return it;
-                    })
-            );
-
-            return {...state, list: removeRecursive(state.list, payload)}
+            const removeItemI = (list, itemToRemove) => list
+                .filter(x => x !== itemToRemove)
+                .map(x => x.update('childrens', y => y && removeItemI(y, itemToRemove)));
+            return state.merge({ list: removeItemI(state.get('list'), payload) });
         }
         case RESET_STATE: {
             return initState;

@@ -12,10 +12,8 @@ class Task1 extends Component {
     this.props.calcCount();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.items !== nextProps.items) {
-      this.props.calcCount();
-    }
+  componentWillUpdate() {
+    this.props.calcCount();
   }
 
   render() {
@@ -34,8 +32,8 @@ class Task1 extends Component {
 
 export default connect(
   state => ({
-    items: state.task1.list,
-    count: state.task1.count
+    items: state.task1.get('list'),
+    count: state.task1.get('count')
   }),
   { calcCount, removeItem, resetState }
 )(Task1);
