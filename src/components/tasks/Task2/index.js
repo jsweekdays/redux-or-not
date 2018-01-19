@@ -4,34 +4,43 @@ import { Button, Modal, ModalFooter } from 'reactstrap';
 import Form from './Form'
 import Preview from './Preview'
 
-class Task2 extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      modal: false
-    };
-
-    this.toggle = this.toggle.bind(this);
+const trueStateHOC = (Comp) => class WTFClass extends Component {
+  state = {
+    username: 'Initial username',
+    email: 'Initial email',
+    comment: 'Initial comment'
   }
 
-  toggle() {
-    this.setState({
-      modal: !this.state.modal
-    });
-  }
+  update = key => e => this.setState({...this.state, [key]: e.target.value})
 
   render() {
+    return <Comp {...this.props} update={this.update} form={this.state} />
+  }
+}
+
+class Task2 extends Component {
+  state = {
+    modal: false
+  }
+
+  toggle = () => this.setState({
+    modal: !this.state.modal
+  })
+
+  render() {
+    const { form, update } = this.props
+
     return (
       <div>
-        <Form />
+        <Form onPreviewClick={this.toggle} update={update} {...form} />
 
         <hr />
 
         <h4>Preview</h4>
-        <Preview />
+        <Preview {...form} />
 
         <Modal isOpen={this.state.modal} toggle={this.toggle}>
-          <Preview />
+          <Preview {...form} />
           <ModalFooter>
             <Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
             <Button color="secondary" onClick={this.toggle}>Cancel</Button>
@@ -42,4 +51,4 @@ class Task2 extends Component {
   }
 }
 
-export default Task2;
+export default trueStateHOC(Task2);
